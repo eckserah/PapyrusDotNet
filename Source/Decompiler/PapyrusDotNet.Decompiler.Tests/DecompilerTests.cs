@@ -31,8 +31,10 @@ namespace PapyrusDotNet.Decompiler.Tests
         [TestMethod]
         public void Decompile_FollowersScript()
         {
+            //var asm = PapyrusAssemblyDefinition.ReadAssembly(
+               // @"D:\Git\PapyrusDotNet\Source\Test Scripts\Fallout 4\followersscript.pex");
             var asm = PapyrusAssemblyDefinition.ReadAssembly(
-                @"D:\Git\PapyrusDotNet\Source\Test Scripts\Fallout 4\followersscript.pex");
+                @"K:\f76backups\1.4.1.3\Data\scripts\client\autotestclient\babylontest.pex");
 
             var decompiler =
                 new PapyrusDecompiler(asm);

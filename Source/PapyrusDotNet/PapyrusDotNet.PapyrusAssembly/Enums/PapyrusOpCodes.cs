@@ -106,6 +106,7 @@ namespace PapyrusDotNet.PapyrusAssembly
         ArrayInsertElement,
         ArrayRemoveLastElement,
         ArrayRemoveElements,
-        ArrayClearElements
+        ArrayClearElements,
+        ArrayGetAllMatchingElements //New in Fallout 76
     }
 }

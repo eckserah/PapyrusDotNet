@@ -115,12 +115,15 @@ namespace PapyrusDotNet.Decompiler
             TempStringTable.Add("false");
 
             TempStringTable.Add("find");
+            TempStringTable.Add("findstruct");
             TempStringTable.Add("rfind");
+            TempStringTable.Add("rfindstruct");
             TempStringTable.Add("add");
             TempStringTable.Add("insert");
             TempStringTable.Add("removelast");
             TempStringTable.Add("remove");
             TempStringTable.Add("clear");
+            TempStringTable.Add("getallmatchingstructs");
         }
 
         /// <summary>

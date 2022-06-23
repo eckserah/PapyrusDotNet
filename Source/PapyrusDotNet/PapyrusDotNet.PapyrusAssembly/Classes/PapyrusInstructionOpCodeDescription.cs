@@ -79,6 +79,7 @@ namespace PapyrusDotNet.PapyrusAssembly
             Descriptions.Add(PapyrusOpCodes.ArrayRemoveLastElement, new PapyrusInstructionOpCodeDescription(1, false));
             Descriptions.Add(PapyrusOpCodes.ArrayRemoveElements, new PapyrusInstructionOpCodeDescription(3, false));
             Descriptions.Add(PapyrusOpCodes.ArrayClearElements, new PapyrusInstructionOpCodeDescription(1, false));
+            Descriptions.Add(PapyrusOpCodes.ArrayGetAllMatchingElements, new PapyrusInstructionOpCodeDescription(6, false));
         }
 
         public string[] Aliases { get; }

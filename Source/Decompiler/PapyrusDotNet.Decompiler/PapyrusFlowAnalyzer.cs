@@ -100,7 +100,7 @@ namespace PapyrusDotNet.Decompiler
                         {
                             Assert.AreEqual(2, ins.Arguments.Count);
                             Assert.IsTrue(ins.Arguments[0].Type == PapyrusPrimitiveType.Reference ||
-                                          ins.Arguments[0].Type == PapyrusPrimitiveType.Boolean);
+                                          ins.Arguments[0].Type == PapyrusPrimitiveType.Boolean || ins.Arguments[0].Type == PapyrusPrimitiveType.Integer);
                             Assert.AreEqual(PapyrusPrimitiveType.Integer, ins.Arguments[1].Type);
 
                             // Conditional jump
@@ -130,7 +130,7 @@ namespace PapyrusDotNet.Decompiler
                             {
                                 condition = ins.GetArgTableIndex(0);
                             }
-                            else
+                            else if (ins.Arguments[0].Type == PapyrusPrimitiveType.Boolean)
                             {
                                 if (ins.GetBoolArg(0))
                                 {
@@ -140,6 +140,9 @@ namespace PapyrusDotNet.Decompiler
                                 {
                                     condition = tempTable["false"];
                                 }
+                            } else
+                            {
+                                condition = ins.GetArgTableIndex(0);
                             }
                             if (ins.OpCode == PapyrusOpCodes.Jmpf)
                             {
@@ -755,7 +758,7 @@ namespace PapyrusDotNet.Decompiler
                         case PapyrusOpCodes.ArrayFindStruct:
                             {
                                 var callNode = new CallMethodNode(ip, ins.GetArgTableIndex(1), FromValue(ip, args[0]),
-                                    tempTable["find"]);
+                                    tempTable["findstruct"]);
                                 var pNode = callNode.GetParameters();
                                 pNode.Adopt(FromValue(ip, args[2]));
                                 pNode.Adopt(FromValue(ip, args[3]));
@@ -766,7 +769,7 @@ namespace PapyrusDotNet.Decompiler
                         case PapyrusOpCodes.ArrayFindLastStruct:
                             {
                                 var callNode = new CallMethodNode(ip, ins.GetArgTableIndex(1), FromValue(ip, args[0]),
-                                    tempTable["rfind"]);
+                                    tempTable["rfindstruct"]);
                                 var pNode = callNode.GetParameters();
                                 pNode.Adopt(FromValue(ip, args[2]));
                                 pNode.Adopt(FromValue(ip, args[3]));
@@ -814,6 +817,19 @@ namespace PapyrusDotNet.Decompiler
                             {
                                 node = new CallMethodNode(ip, new PapyrusStringTableIndex(), FromValue(ip, args[0]),
                                     tempTable["clear"]);
+                                break;
+                            }
+                        case PapyrusOpCodes.ArrayGetAllMatchingElements:
+                            {
+                                var callNode = new CallMethodNode(ip, ins.GetArgTableIndex(1), FromValue(ip, args[0]),
+                                    tempTable["getallmatchingstructs"]);
+                                var pNode = callNode.GetParameters();
+                                pNode.Adopt(FromValue(ip, args[2]));
+                                pNode.Adopt(FromValue(ip, args[3]));
+                                pNode.Adopt(FromValue(ip, args[4]));
+                                pNode.Adopt(FromValue(ip, args[5]));
+
+                                node = callNode;
                                 break;
                             }
                     }

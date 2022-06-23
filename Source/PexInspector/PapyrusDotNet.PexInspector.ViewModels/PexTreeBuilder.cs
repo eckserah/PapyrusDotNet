@@ -15,8 +15,9 @@ namespace PapyrusDotNet.PexInspector.ViewModels
             this.pexLoader = pexLoader;
         }
 
-        public ObservableCollection<PapyrusViewModel> BuildPexTree(ObservableCollection<PapyrusViewModel> pexTree, PapyrusViewModel target = null)
+        public ObservableCollection<PapyrusViewModel> BuildPexTree(ObservableCollection<PapyrusViewModel> pexTree, out bool forceReload, PapyrusViewModel target = null)
         {
+            forceReload = false;
             var loadedAssemblies = pexLoader.GetLoadedAssemblies().ToList();
             var loadedAssemblyNames = pexLoader.GetLoadedAssemblyNames();
             if (target != null)
@@ -30,7 +31,7 @@ namespace PapyrusDotNet.PexInspector.ViewModels
                     var asmIndex =
                         loadedAssemblies.IndexOf(i => Enumerable.First<PapyrusTypeDefinition>(i.Types).Name.Value == asm.Types.First().Name.Value);
                     PapyrusViewModel newNode;
-                    if (BuildPexTree(asmIndex, asmnames, out newNode)) return pexTree;
+                    if (BuildPexTree(asmIndex, asmnames, out newNode, out forceReload)) return pexTree;
 
                     pexTree.RemoveAt(itemIndex);
                     pexTree.Insert(itemIndex, newNode);
@@ -43,7 +44,7 @@ namespace PapyrusDotNet.PexInspector.ViewModels
                 for (var index = 0; index < loadedAssemblies.Count; index++)
                 {
                     PapyrusViewModel newNode;
-                    if (BuildPexTree(index, asmnames, out newNode))
+                    if (BuildPexTree(index, asmnames, out newNode, out forceReload))
                         return pexTree; // the tree will be reloaded, so we don't wanna finish it here.
                     if (newNode != null)
                     {
@@ -57,8 +58,9 @@ namespace PapyrusDotNet.PexInspector.ViewModels
             return pexTree;
         }
 
-        public bool BuildPexTree(int assemblyIndex, string[] asmnames, out PapyrusViewModel root)
+        public bool BuildPexTree(int assemblyIndex, string[] asmnames, out PapyrusViewModel root, out bool forceReload)
         {
+            forceReload = false;
             var loadedAssemblies = pexLoader.GetLoadedAssemblies().ToArray();
             var asm = loadedAssemblies[assemblyIndex];
             root = new PapyrusViewModel();
@@ -75,7 +77,7 @@ namespace PapyrusDotNet.PexInspector.ViewModels
 
                 if (!string.IsNullOrEmpty(type.BaseTypeName?.Value))
                 {
-                    if (pexLoader.EnsureAssemblyLoaded(type.BaseTypeName.Value)) return true;
+                    if (pexLoader.EnsureAssemblyLoaded(type.BaseTypeName.Value, out forceReload)) return true;
                 }
 
                 foreach (var structType in type.NestedTypes.OrderBy(i => i.Name.Value))
@@ -93,7 +95,7 @@ namespace PapyrusDotNet.PexInspector.ViewModels
 
                         if (!string.IsNullOrEmpty(field.TypeName))
                         {
-                            if (type.BaseTypeName != null && pexLoader.EnsureAssemblyLoaded(type.BaseTypeName.Value)) return true;
+                            if (type.BaseTypeName != null && pexLoader.EnsureAssemblyLoaded(type.BaseTypeName.Value, out forceReload)) return true;
                         }
                     }
                 }
@@ -115,7 +117,7 @@ namespace PapyrusDotNet.PexInspector.ViewModels
 
                         if (!string.IsNullOrEmpty(method.ReturnTypeName.Value))
                         {
-                            if (pexLoader.EnsureAssemblyLoaded(method.ReturnTypeName.Value)) return true;
+                            if (pexLoader.EnsureAssemblyLoaded(method.ReturnTypeName.Value, out forceReload)) return true;
                         }
                     }
                 }
@@ -128,7 +130,7 @@ namespace PapyrusDotNet.PexInspector.ViewModels
 
                     if (!string.IsNullOrEmpty(field.TypeName))
                     {
-                        if (pexLoader.EnsureAssemblyLoaded(field.TypeName)) return true;
+                        if (pexLoader.EnsureAssemblyLoaded(field.TypeName, out forceReload)) return true;
                     }
                 }
 
@@ -140,7 +142,7 @@ namespace PapyrusDotNet.PexInspector.ViewModels
 
                     if (!string.IsNullOrEmpty(item.TypeName.Value))
                     {
-                        if (pexLoader.EnsureAssemblyLoaded(item.TypeName.Value)) return true;
+                        if (pexLoader.EnsureAssemblyLoaded(item.TypeName.Value, out forceReload)) return true;
                     }
 
                     if (item.HasGetter && item.GetMethod != null)

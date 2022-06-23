@@ -16,7 +16,7 @@ namespace PapyrusDotNet.PexInspector.ViewModels
         private Dictionary<string, string> discoveredScriptNames;
         private List<string> discoveredScripts;
 
-        public void LoadPex(string fileName)
+        public void LoadPex(string fileName, bool forceReload = false)
         {
             var name = Path.GetFileName(fileName);
             var directoryName = Path.GetDirectoryName(fileName);
@@ -56,8 +56,9 @@ namespace PapyrusDotNet.PexInspector.ViewModels
             //RaiseCommandsCanExecute();
         }
 
-        public bool EnsureAssemblyLoaded(string value)
+        public bool EnsureAssemblyLoaded(string value, out bool forceReload)
         {
+            forceReload = false;
             if (value == null) return false;
 
             var lower = value.ToLower();
@@ -93,6 +94,7 @@ namespace PapyrusDotNet.PexInspector.ViewModels
                     {
                         // Load the script and enforce to reload the tree.
                         LoadPex(targetScriptFile);
+                        forceReload = true;
                         return true;
                     }
                 }

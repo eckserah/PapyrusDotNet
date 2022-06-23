@@ -970,8 +970,9 @@ namespace PapyrusDotNet.PexInspector.ViewModels
                     var index = loadedAssemblies.IndexOf(asm);
 
                     loadedAssemblies[index] = PapyrusAssemblyDefinition.ReloadAssembly(asm);
+                    bool forceReload = false;
 
-                    PexTree = pexTreeBuilder.BuildPexTree(PexTree, top);
+                    PexTree = pexTreeBuilder.BuildPexTree(PexTree, out forceReload, top);
 
                     InstructionEditor.SelectedMethodInstructions = new ObservableCollection<PapyrusInstruction>();
 
@@ -1240,8 +1241,14 @@ namespace PapyrusDotNet.PexInspector.ViewModels
             if (ofd.ShowDialog().GetValueOrDefault())
             {
                 pexLoader.LoadPex(ofd.FileName);
-
-                PexTree = pexTreeBuilder.BuildPexTree(PexTree);
+                int l = 0;
+                bool forceReload = false;
+                do
+                {
+                    forceReload = false;
+                    PexTree = pexTreeBuilder.BuildPexTree(PexTree, out forceReload);
+                    l++;
+                } while (forceReload && l < 50);
             }
         }
 
